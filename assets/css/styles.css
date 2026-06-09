@@ -47,7 +47,7 @@
 
     .topbar {
       display: grid;
-      grid-template-columns: 1fr auto;
+      grid-template-columns: 1fr auto auto;
       align-items: center;
       gap: 18px;
       margin-bottom: 20px;
@@ -113,6 +113,88 @@
       color: var(--muted);
       font-size: 0.78rem;
       white-space: nowrap;
+    }
+
+    .account-menu {
+      position: relative;
+      justify-self: end;
+    }
+
+    .account-icon-btn {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: white;
+      color: var(--teal-dark);
+      box-shadow: var(--shadow);
+    }
+
+    .account-icon-btn:hover,
+    .account-icon-btn[aria-expanded="true"] {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 4px rgba(31, 122, 107, 0.12), var(--shadow);
+    }
+
+    .user-icon {
+      position: relative;
+      width: 24px;
+      height: 24px;
+    }
+
+    .user-icon::before,
+    .user-icon::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 2px solid currentColor;
+    }
+
+    .user-icon::before {
+      top: 2px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: white;
+    }
+
+    .user-icon::after {
+      bottom: 2px;
+      width: 18px;
+      height: 10px;
+      border-radius: 12px 12px 5px 5px;
+      border-bottom-width: 0;
+    }
+
+    .account-dropdown {
+      position: absolute;
+      top: calc(100% + 12px);
+      right: 0;
+      z-index: 20;
+      display: none;
+      width: min(360px, calc(100vw - 32px));
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: var(--shadow);
+    }
+
+    .account-dropdown.open {
+      display: block;
+    }
+
+    .account-dropdown .side-panel,
+    .account-dropdown .history-panel {
+      box-shadow: none;
+      margin: 0;
+    }
+
+    .account-dropdown .premium-panel {
+      margin-top: 12px;
     }
 
     .layout {
@@ -182,6 +264,24 @@
       gap: 8px;
       color: var(--muted);
       font-size: 0.9rem;
+    }
+
+    .study-filter {
+      display: none;
+    }
+
+    .study-filter.show {
+      display: flex;
+    }
+
+    .study-filter input {
+      width: 190px;
+    }
+
+    .filter-status {
+      color: var(--muted);
+      font-size: 0.86rem;
+      min-height: 20px;
     }
 
     select {
@@ -609,13 +709,24 @@
     }
 
     @media (max-width: 860px) {
-      .topbar,
       .layout {
         grid-template-columns: 1fr;
       }
 
+      .topbar {
+        grid-template-columns: 1fr auto;
+      }
+
       .stats {
+        grid-column: 1 / -1;
+        grid-row: 2;
         width: 100%;
+      }
+
+      .account-menu {
+        grid-column: 2;
+        grid-row: 1;
+        align-self: start;
       }
 
       .prompt-area {
@@ -648,6 +759,16 @@
 
       .stat:last-child {
         grid-column: 1 / -1;
+      }
+
+      .account-dropdown {
+        position: fixed;
+        top: 72px;
+        right: 10px;
+        left: 10px;
+        width: auto;
+        max-height: calc(100vh - 92px);
+        overflow: auto;
       }
 
       .segmented {

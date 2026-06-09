@@ -49,6 +49,9 @@ const lessonGroups = Array.isArray(window.builtInLessonGroups) ? window.builtInL
       level: "A1",
       topic: "all",
       practiceFilter: localStorage.getItem("englishTrainerPracticeFilter") || "all",
+      studyMode: localStorage.getItem("englishTrainerStudyMode") || "normal",
+      vocabularyQuery: localStorage.getItem("englishTrainerVocabularyQuery") || "",
+      grammarFocus: localStorage.getItem("englishTrainerGrammarFocus") || "all",
       speechRate: localStorage.getItem("englishTrainerSpeechRate") || "0.75",
       currentUser: getCurrentUser(),
       usage: getTodayUsage(),
@@ -73,6 +76,12 @@ const lessonGroups = Array.isArray(window.builtInLessonGroups) ? window.builtInL
       streakStat: document.getElementById("streakStat"),
       topicSelect: document.getElementById("topicSelect"),
       practiceFilterSelect: document.getElementById("practiceFilterSelect"),
+      studyModeSelect: document.getElementById("studyModeSelect"),
+      vocabularyInput: document.getElementById("vocabularyInput"),
+      vocabularyFilterWrap: document.getElementById("vocabularyFilterWrap"),
+      grammarSelect: document.getElementById("grammarSelect"),
+      grammarFilterWrap: document.getElementById("grammarFilterWrap"),
+      studyFilterStatus: document.getElementById("studyFilterStatus"),
       levelPill: document.getElementById("levelPill"),
       topicPill: document.getElementById("topicPill"),
       indexPill: document.getElementById("indexPill"),
@@ -98,6 +107,8 @@ const lessonGroups = Array.isArray(window.builtInLessonGroups) ? window.builtInL
       customLevelSelect: document.getElementById("customLevelSelect"),
       addCustomBtn: document.getElementById("addCustomBtn"),
       customStatus: document.getElementById("customStatus"),
+      accountMenuBtn: document.getElementById("accountMenuBtn"),
+      accountMenuPanel: document.getElementById("accountMenuPanel"),
       accountStatus: document.getElementById("accountStatus"),
       authForm: document.getElementById("authForm"),
       sessionActions: document.getElementById("sessionActions"),
@@ -295,6 +306,7 @@ const lessonGroups = Array.isArray(window.builtInLessonGroups) ? window.builtInL
         topic: lesson.topic,
         vi: lesson.vi,
         text: lesson.answers[0],
+        answers: [lesson.answers[0]],
         focus: lesson.focus
       }));
     }
@@ -326,9 +338,48 @@ const lessonGroups = Array.isArray(window.builtInLessonGroups) ? window.builtInL
       return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     }
 
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
     function tokens(text) {
       const normalized = normalize(text);
       return normalized ? normalized.split(" ") : [];
+    }
+
+    function grammarKey(item) {
+      return (item.focus || "General sentence pattern").trim();
+    }
+
+    function vocabularyMatches(item, query) {
+      const search = normalize(query);
+      if (!search) return true;
+      const variants = new Set([search]);
+      if (search.endsWith("y") && search.length > 2) variants.add(`${search.slice(0, -1)}ies`);
+      variants.add(`${search}s`);
+      variants.add(`${search}es`);
+      variants.add(`${search}ed`);
+      variants.add(`${search}ing`);
+      return item.answers.some(answer => {
+        const words = tokens(answer);
+        return words.some(word => variants.has(word));
+      });
+    }
+
+    function applyStudyFilter(items) {
+      if (state.studyMode === "vocabulary") {
+        const query = state.vocabularyQuery.trim();
+        if (!query) return items;
+        return items.filter(item => vocabularyMatches(item, query));
+      }
+      if (state.studyMode === "grammar" && state.grammarFocus !== "all") {
+        return items.filter(item => grammarKey(item) === state.grammarFocus);
+      }
+      return items;
     }
 
     function levenshtein(a, b) {
@@ -599,6 +650,7 @@ const lessonGroups = Array.isArray(window.builtInLessonGroups) ? window.builtInL
         const topicFiltered = items.filter(item => item.topic === state.topic);
         if (topicFiltered.length) items = topicFiltered;
       }
+      items = applyStudyFilter(items);
       return applyPracticeFilter(items);
     }
 
@@ -629,6 +681,7 @@ const lessonGroups = Array.isArray(window.builtInLessonGroups) ? window.builtInL
         const topicFiltered = items.filter(item => item.topic === state.topic);
         if (topicFiltered.length) items = topicFiltered;
       }
+      items = applyStudyFilter(items);
       return applyPracticeFilter(items);
     }
 
@@ -660,6 +713,7 @@ const lessonGroups = Array.isArray(window.builtInLessonGroups) ? window.builtInL
     function nextLesson() {
       if (!state.queue.length) buildQueue();
       if (!state.queue.length) {
+        renderStudyControls();
         renderLesson();
         return;
       }
@@ -830,6 +884,32 @@ const lessonGroups = Array.isArray(window.builtInLessonGroups) ? window.builtInL
       els.topicSelect.innerHTML = `<option value="all">Tất cả</option>` + topics.map(topic => `<option value="${topic}">${topic}</option>`).join("");
       if (state.topic !== "all" && !topics.includes(state.topic)) state.topic = "all";
       els.topicSelect.value = state.topic;
+    }
+
+    function renderGrammarOptions() {
+      const options = [...new Set(lessons.filter(isAllowedByPlan).map(grammarKey))].sort();
+      els.grammarSelect.innerHTML = `<option value="all">Tat ca ngu phap</option>` + options.map(focus => `<option value="${escapeHtml(focus)}">${escapeHtml(focus)}</option>`).join("");
+      if (state.grammarFocus !== "all" && !options.includes(state.grammarFocus)) state.grammarFocus = "all";
+      els.grammarSelect.value = state.grammarFocus;
+    }
+
+    function renderStudyControls() {
+      els.studyModeSelect.value = state.studyMode;
+      els.vocabularyInput.value = state.vocabularyQuery;
+      els.vocabularyFilterWrap.classList.toggle("show", state.studyMode === "vocabulary");
+      els.grammarFilterWrap.classList.toggle("show", state.studyMode === "grammar");
+      const count = filteredLessons().length;
+      if (state.studyMode === "vocabulary") {
+        els.studyFilterStatus.textContent = state.vocabularyQuery.trim()
+          ? `${count} cau co tu "${state.vocabularyQuery.trim()}"`
+          : "Nhap mot tu tieng Anh de loc cau.";
+      } else if (state.studyMode === "grammar") {
+        els.studyFilterStatus.textContent = state.grammarFocus === "all"
+          ? `${count} cau trong tat ca ngu phap.`
+          : `${count} cau theo ngu phap da chon.`;
+      } else {
+        els.studyFilterStatus.textContent = "";
+      }
     }
 
     function renderStats() {
@@ -1049,9 +1129,29 @@ const lessonGroups = Array.isArray(window.builtInLessonGroups) ? window.builtInL
       const customLimit = activePlan().customLimit === Infinity ? "không giới hạn" : activePlan().customLimit;
       els.customStatus.textContent = `Kho hiện có ${lessons.filter(isAllowedByPlan).length} câu theo gói của bạn. Câu tự thêm: ${customLessonsForActiveUser().length}/${customLimit}.`;
       renderTopics();
+      renderGrammarOptions();
+      renderStudyControls();
       renderLesson();
       renderStats();
       renderHistory();
+    }
+
+    function resetPracticeView() {
+      buildQueue();
+      els.answerInput.value = "";
+      els.listeningInput.value = "";
+      els.feedback.className = "feedback";
+      els.feedback.innerHTML = "";
+      els.listeningFeedback.className = "feedback";
+      els.listeningFeedback.innerHTML = "";
+      els.listeningStatus.textContent = "Sáºµn sÃ ng phÃ¡t cÃ¢u nghe Ä‘áº§u tiÃªn.";
+      renderStudyControls();
+      renderLesson();
+    }
+
+    function setAccountMenu(open) {
+      els.accountMenuPanel.classList.toggle("open", open);
+      els.accountMenuBtn.setAttribute("aria-expanded", String(open));
     }
 
     document.querySelectorAll("[data-level]").forEach(button => {
@@ -1085,7 +1185,27 @@ const lessonGroups = Array.isArray(window.builtInLessonGroups) ? window.builtInL
       els.listeningFeedback.className = "feedback";
       els.listeningFeedback.innerHTML = "";
       els.listeningStatus.textContent = "Sẵn sàng phát câu nghe đầu tiên.";
+      renderStudyControls();
       renderLesson();
+    });
+
+    els.studyModeSelect.addEventListener("change", () => {
+      state.studyMode = els.studyModeSelect.value;
+      localStorage.setItem("englishTrainerStudyMode", state.studyMode);
+      resetPracticeView();
+      if (state.studyMode === "vocabulary") els.vocabularyInput.focus();
+    });
+
+    els.vocabularyInput.addEventListener("input", () => {
+      state.vocabularyQuery = els.vocabularyInput.value;
+      localStorage.setItem("englishTrainerVocabularyQuery", state.vocabularyQuery);
+      resetPracticeView();
+    });
+
+    els.grammarSelect.addEventListener("change", () => {
+      state.grammarFocus = els.grammarSelect.value;
+      localStorage.setItem("englishTrainerGrammarFocus", state.grammarFocus);
+      resetPracticeView();
     });
 
     els.practiceFilterSelect.addEventListener("change", () => {
@@ -1119,6 +1239,19 @@ const lessonGroups = Array.isArray(window.builtInLessonGroups) ? window.builtInL
     els.registerBtn.addEventListener("click", registerFreeAccount);
     els.logoutBtn.addEventListener("click", logout);
     els.upgradeInfoBtn.addEventListener("click", showUpgradeInfo);
+    els.accountMenuBtn.addEventListener("click", event => {
+      event.stopPropagation();
+      setAccountMenu(!els.accountMenuPanel.classList.contains("open"));
+    });
+    els.accountMenuPanel.addEventListener("click", event => {
+      event.stopPropagation();
+    });
+    document.addEventListener("click", () => {
+      setAccountMenu(false);
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") setAccountMenu(false);
+    });
     els.startListeningBtn.addEventListener("click", () => startListening());
     els.repeatListeningBtn.addEventListener("click", repeatListening);
     els.checkListeningBtn.addEventListener("click", checkListeningAnswer);

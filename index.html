@@ -21,6 +21,46 @@
         <div class="stat"><b id="accuracyStat">0%</b><span>độ chính xác</span></div>
         <div class="stat"><b id="streakStat">0</b><span>chuỗi đúng</span></div>
       </section>
+      <div class="account-menu">
+        <button class="account-icon-btn" type="button" id="accountMenuBtn" aria-label="Tài khoản" aria-expanded="false" aria-controls="accountMenuPanel">
+          <span class="user-icon" aria-hidden="true"></span>
+        </button>
+        <section class="account-dropdown" id="accountMenuPanel" aria-label="Tài khoản và gói premium">
+          <section class="side-panel account-panel">
+            <h2>Tài khoản</h2>
+            <div id="accountStatus" class="mini">Bạn chưa đăng nhập.</div>
+            <div class="field-grid" id="authForm">
+              <label>
+                Tên đăng nhập
+                <input id="usernameInput" type="text" autocomplete="username" placeholder="Ví dụ: free01">
+              </label>
+              <label>
+                Mật khẩu
+                <input id="passwordInput" type="password" autocomplete="current-password" placeholder="Mật khẩu">
+              </label>
+              <div class="auth-actions">
+                <button class="btn" type="button" id="loginBtn">Đăng nhập</button>
+                <button class="btn secondary" type="button" id="registerBtn">Đăng ký FREE</button>
+              </div>
+            </div>
+            <div class="auth-actions" id="sessionActions">
+              <button class="btn secondary" type="button" id="logoutBtn">Đăng xuất</button>
+            </div>
+            <p class="mini" id="planStatus">FREE: 20 câu/ngày, A1-A2, tối đa 20 câu tự thêm.</p>
+          </section>
+
+          <section class="history-panel premium-panel">
+            <h2>Gói PREMIUM</h2>
+            <div class="pricing-list">
+              <div><b>1 tháng</b><span>35.000đ</span></div>
+              <div><b>6 tháng</b><span>149.000đ</span></div>
+              <div><b>1 năm</b><span>249.000đ</span></div>
+            </div>
+            <p class="mini">Thanh toán sau này bằng VietQR qua PayOS. Phần cấu hình PayOS đã được chuẩn bị trong code.</p>
+            <button class="btn secondary" type="button" id="upgradeInfoBtn">Xem hướng dẫn nâng cấp</button>
+          </section>
+        </section>
+      </div>
     </header>
 
     <div class="layout">
@@ -49,6 +89,25 @@
               <option value="incorrect">Chưa làm đúng</option>
             </select>
           </label>
+          <label class="select-wrap">
+            Che do hoc
+            <select id="studyModeSelect" aria-label="Chon che do hoc">
+              <option value="normal">Luyen tap thong thuong</option>
+              <option value="vocabulary">Hoc tu vung</option>
+              <option value="grammar">Hoc ngu phap</option>
+            </select>
+          </label>
+          <label class="select-wrap study-filter" id="vocabularyFilterWrap">
+            Tu vung
+            <input id="vocabularyInput" type="text" autocomplete="off" spellcheck="false" placeholder="Vi du: work">
+          </label>
+          <label class="select-wrap study-filter" id="grammarFilterWrap">
+            Ngu phap
+            <select id="grammarSelect" aria-label="Chon ngu phap">
+              <option value="all">Tat ca ngu phap</option>
+            </select>
+          </label>
+          <span class="filter-status" id="studyFilterStatus"></span>
         </div>
 
         <div class="prompt-area">
@@ -106,40 +165,6 @@
       </section>
 
       <aside>
-        <section class="side-panel account-panel">
-          <h2>Tài khoản</h2>
-          <div id="accountStatus" class="mini">Bạn chưa đăng nhập.</div>
-          <div class="field-grid" id="authForm">
-            <label>
-              Tên đăng nhập
-              <input id="usernameInput" type="text" autocomplete="username" placeholder="Ví dụ: free01">
-            </label>
-            <label>
-              Mật khẩu
-              <input id="passwordInput" type="password" autocomplete="current-password" placeholder="Mật khẩu">
-            </label>
-            <div class="auth-actions">
-              <button class="btn" type="button" id="loginBtn">Đăng nhập</button>
-              <button class="btn secondary" type="button" id="registerBtn">Đăng ký FREE</button>
-            </div>
-          </div>
-          <div class="auth-actions" id="sessionActions">
-            <button class="btn secondary" type="button" id="logoutBtn">Đăng xuất</button>
-          </div>
-          <p class="mini" id="planStatus">FREE: 20 câu/ngày, A1-A2, tối đa 20 câu tự thêm.</p>
-        </section>
-
-        <section class="history-panel">
-          <h2>Gói PREMIUM</h2>
-          <div class="pricing-list">
-            <div><b>1 tháng</b><span>35.000đ</span></div>
-            <div><b>6 tháng</b><span>149.000đ</span></div>
-            <div><b>1 năm</b><span>249.000đ</span></div>
-          </div>
-          <p class="mini">Thanh toán sau này bằng VietQR qua PayOS. Phần cấu hình PayOS đã được chuẩn bị trong code.</p>
-          <button class="btn secondary" type="button" id="upgradeInfoBtn">Xem hướng dẫn nâng cấp</button>
-        </section>
-
         <section class="side-panel">
           <h2>Tiến độ cấp độ</h2>
           <div class="mini" id="progressText">0/0 câu trong bộ hiện tại.</div>
