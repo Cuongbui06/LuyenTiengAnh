@@ -1,221 +1,337 @@
 <!doctype html>
 <html lang="vi">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>English Trainer A1-B2</title>
-  <link rel="stylesheet" href="./assets/css/styles.css">
-</head>
-<body>
-<main class="app">
-    <header class="topbar">
-      <div class="brand">
-        <div class="mark" aria-hidden="true">EN</div>
-        <div>
-          <h1>Luyện dịch tiếng Anh</h1>
-          <p class="subtitle">Kho câu A1-B2, luyện dịch, luyện nghe và chấm lỗi ngữ pháp/từ vựng ngay sau mỗi câu.</p>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>English Trainer A1-B2</title>
+    <link rel="stylesheet" href="./assets/css/styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="mark" aria-hidden="true">EN</div>
+          <div>
+            <h1>Luyện dịch tiếng Anh</h1>
+            <p class="subtitle">
+              Kho câu A1-B2, luyện dịch, luyện nghe và chấm lỗi ngữ pháp/từ vựng
+              ngay sau mỗi câu.
+            </p>
+          </div>
         </div>
-      </div>
-      <section class="stats" aria-label="Thống kê">
-        <div class="stat"><b id="doneStat">0</b><span>câu đã làm</span></div>
-        <div class="stat"><b id="accuracyStat">0%</b><span>độ chính xác</span></div>
-        <div class="stat"><b id="streakStat">0</b><span>chuỗi đúng</span></div>
-      </section>
-      <div class="account-menu">
-        <button class="account-icon-btn" type="button" id="accountMenuBtn" aria-label="Tài khoản" aria-expanded="false" aria-controls="accountMenuPanel">
-          <span class="user-icon" aria-hidden="true"></span>
-        </button>
-        <section class="account-dropdown" id="accountMenuPanel" aria-label="Tài khoản và gói premium">
-          <section class="side-panel account-panel">
-            <h2>Tài khoản</h2>
-            <div id="accountStatus" class="mini">Bạn chưa đăng nhập.</div>
-            <div class="field-grid" id="authForm">
-              <label>
-                Tên đăng nhập
-                <input id="usernameInput" type="text" autocomplete="username" placeholder="Ví dụ: free01">
-              </label>
-              <label>
-                Mật khẩu
-                <input id="passwordInput" type="password" autocomplete="current-password" placeholder="Mật khẩu">
-              </label>
-              <div class="auth-actions">
-                <button class="btn" type="button" id="loginBtn">Đăng nhập</button>
-                <button class="btn secondary" type="button" id="registerBtn">Đăng ký FREE</button>
+        <section class="stats" aria-label="Thống kê">
+          <div class="stat"><b id="doneStat">0</b><span>câu đã làm</span></div>
+          <div class="stat">
+            <b id="accuracyStat">0%</b><span>độ chính xác</span>
+          </div>
+          <div class="stat">
+            <b id="streakStat">0</b><span>chuỗi đúng</span>
+          </div>
+        </section>
+        <div class="account-menu">
+          <button
+            class="account-icon-btn"
+            type="button"
+            id="accountMenuBtn"
+            aria-label="Tài khoản"
+            aria-expanded="false"
+            aria-controls="accountMenuPanel"
+          >
+            <span class="user-icon" aria-hidden="true"></span>
+          </button>
+          <section
+            class="account-dropdown"
+            id="accountMenuPanel"
+            aria-label="Tài khoản và gói premium"
+          >
+            <section class="side-panel account-panel">
+              <h2>Tài khoản</h2>
+              <div id="accountStatus" class="mini">Bạn chưa đăng nhập.</div>
+              <div class="field-grid" id="authForm">
+                <label>
+                  Tên đăng nhập
+                  <input
+                    id="usernameInput"
+                    type="text"
+                    autocomplete="username"
+                    placeholder="Ví dụ: free01"
+                  />
+                </label>
+                <label>
+                  Mật khẩu
+                  <input
+                    id="passwordInput"
+                    type="password"
+                    autocomplete="current-password"
+                    placeholder="Mật khẩu"
+                  />
+                </label>
+                <div class="auth-actions">
+                  <button class="btn" type="button" id="loginBtn">
+                    Đăng nhập
+                  </button>
+                  <button class="btn secondary" type="button" id="registerBtn">
+                    Đăng ký FREE
+                  </button>
+                </div>
               </div>
-            </div>
-            <div class="auth-actions" id="sessionActions">
-              <button class="btn secondary" type="button" id="logoutBtn">Đăng xuất</button>
-            </div>
-            <p class="mini" id="planStatus">FREE: 20 câu/ngày, A1-A2, tối đa 20 câu tự thêm.</p>
+              <div class="auth-actions" id="sessionActions">
+                <button class="btn secondary" type="button" id="logoutBtn">
+                  Đăng xuất
+                </button>
+              </div>
+              <p class="mini" id="planStatus">
+                FREE: 20 câu/ngày, A1-A2, tối đa 20 câu tự thêm.
+              </p>
+            </section>
+
+            <section class="history-panel premium-panel">
+              <h2>Gói PREMIUM</h2>
+              <div class="pricing-list">
+                <div><b>1 tháng</b><span>35.000đ</span></div>
+                <div><b>6 tháng</b><span>149.000đ</span></div>
+                <div><b>1 năm</b><span>249.000đ</span></div>
+              </div>
+              <p class="mini">
+                Thanh toán sau này bằng VietQR qua PayOS. Phần cấu hình PayOS đã
+                được chuẩn bị trong code.
+              </p>
+              <button class="btn secondary" type="button" id="upgradeInfoBtn">
+                Xem hướng dẫn nâng cấp
+              </button>
+            </section>
           </section>
-
-          <section class="history-panel premium-panel">
-            <h2>Gói PREMIUM</h2>
-            <div class="pricing-list">
-              <div><b>1 tháng</b><span>35.000đ</span></div>
-              <div><b>6 tháng</b><span>149.000đ</span></div>
-              <div><b>1 năm</b><span>249.000đ</span></div>
-            </div>
-            <p class="mini">Thanh toán sau này bằng VietQR qua PayOS. Phần cấu hình PayOS đã được chuẩn bị trong code.</p>
-            <button class="btn secondary" type="button" id="upgradeInfoBtn">Xem hướng dẫn nâng cấp</button>
-          </section>
-        </section>
-      </div>
-    </header>
-
-    <div class="layout">
-      <section class="practice">
-        <div class="controls">
-          <div class="segmented" aria-label="Chọn cấp độ">
-            <button type="button" data-level="A1" class="active">A1</button>
-            <button type="button" data-level="A2">A2</button>
-            <button type="button" data-level="B1">B1</button>
-            <button type="button" data-level="B2">B2</button>
-            <button type="button" data-level="mix">Mix</button>
-            <button type="button" data-level="weak">Yếu</button>
-          </div>
-          <label class="select-wrap">
-            Chủ đề
-            <select id="topicSelect" aria-label="Chọn chủ đề">
-              <option value="all">Tất cả</option>
-            </select>
-          </label>
-          <label class="select-wrap">
-            Luyện tập
-            <select id="practiceFilterSelect" aria-label="Chọn trạng thái câu luyện">
-              <option value="all">Tất cả câu</option>
-              <option value="unseen">Chưa gặp</option>
-              <option value="seen">Đã gặp</option>
-              <option value="incorrect">Chưa làm đúng</option>
-            </select>
-          </label>
-          <label class="select-wrap">
-            Che do hoc
-            <select id="studyModeSelect" aria-label="Chon che do hoc">
-              <option value="normal">Luyen tap thong thuong</option>
-              <option value="vocabulary">Hoc tu vung</option>
-              <option value="grammar">Hoc ngu phap</option>
-            </select>
-          </label>
-          <label class="select-wrap study-filter" id="vocabularyFilterWrap">
-            Tu vung
-            <input id="vocabularyInput" type="text" autocomplete="off" spellcheck="false" placeholder="Vi du: work">
-          </label>
-          <label class="select-wrap study-filter" id="grammarFilterWrap">
-            Ngu phap
-            <select id="grammarSelect" aria-label="Chon ngu phap">
-              <option value="all">Tat ca ngu phap</option>
-            </select>
-          </label>
-          <span class="filter-status" id="studyFilterStatus"></span>
         </div>
+      </header>
 
-        <div class="prompt-area">
-          <div class="meta-row">
-            <span class="pill" id="levelPill">A1</span>
-            <span class="pill blue" id="topicPill">Daily life</span>
-            <span class="pill amber" id="indexPill">1/1</span>
-          </div>
-          <p class="vietnamese" id="vietnamesePrompt"></p>
-
-          <div class="answer-box">
-            <label for="answerInput">Câu tiếng Anh của bạn</label>
-            <textarea id="answerInput" autocomplete="off" spellcheck="false" placeholder="Nhập bản dịch tiếng Anh..."></textarea>
-          </div>
-
-          <div class="actions">
-            <button class="btn" type="button" id="checkBtn">Kiểm tra</button>
-            <button class="btn secondary" type="button" id="hintBtn">Gợi ý</button>
-            <button class="btn secondary" type="button" id="nextBtn">Câu tiếp</button>
-            <button class="btn danger" type="button" id="resetBtn">Làm mới điểm</button>
-          </div>
-
-          <section class="feedback" id="feedback" aria-live="polite"></section>
-        </div>
-
-        <section class="listening-lab" aria-labelledby="listeningTitle">
-          <div class="listening-head">
-            <div>
-              <h2 id="listeningTitle">Luyện nghe chép chính tả</h2>
-              <p class="mini">Bấm bắt đầu nghe, hệ thống sẽ đọc một đoạn tiếng Anh ngắn. Hãy nhập lại đúng những gì bạn nghe được.</p>
+      <div class="layout">
+        <section class="practice">
+          <div class="controls">
+            <div class="segmented" aria-label="Chọn cấp độ">
+              <button type="button" data-level="A1" class="active">A1</button>
+              <button type="button" data-level="A2">A2</button>
+              <button type="button" data-level="B1">B1</button>
+              <button type="button" data-level="B2">B2</button>
+              <button type="button" data-level="mix">Mix</button>
+              <button type="button" data-level="weak">Yếu</button>
             </div>
-            <span class="pill blue" id="listeningLevelPill">Nghe</span>
-          </div>
-          <p class="listening-status" id="listeningStatus">Sẵn sàng phát câu nghe đầu tiên.</p>
-          <label class="select-wrap">
-            Tốc độ đọc
-            <select id="speechRateSelect" aria-label="Chọn tốc độ đọc">
-              <option value="0.5">0.5x</option>
-              <option value="0.75" selected>0.75x</option>
-              <option value="1">1.0x</option>
-            </select>
-          </label>
-          <div class="answer-box">
-            <label for="listeningInput">Đoạn bạn nghe được</label>
-            <textarea id="listeningInput" autocomplete="off" spellcheck="false" placeholder="Nhập lại câu tiếng Anh bạn vừa nghe..."></textarea>
-          </div>
-          <div class="listening-actions">
-            <button class="btn" type="button" id="startListeningBtn">Bắt đầu nghe</button>
-            <button class="btn secondary" type="button" id="repeatListeningBtn">Nghe lại</button>
-            <button class="btn secondary" type="button" id="checkListeningBtn">Kiểm tra nghe</button>
-            <button class="btn secondary" type="button" id="nextListeningBtn">Câu nghe tiếp</button>
-          </div>
-          <section class="feedback" id="listeningFeedback" aria-live="polite"></section>
-        </section>
-      </section>
-
-      <aside>
-        <section class="side-panel">
-          <h2>Tiến độ cấp độ</h2>
-          <div class="mini" id="progressText">0/0 câu trong bộ hiện tại.</div>
-          <div class="progress-track" aria-hidden="true">
-            <div class="progress-fill" id="progressFill"></div>
-          </div>
-          <div class="mini">Nhấn <kbd>Ctrl</kbd> + <kbd>Enter</kbd> để chấm nhanh.</div>
-          <div class="level-list" id="levelList"></div>
-        </section>
-
-        <section class="history-panel">
-          <h2>Câu gần đây</h2>
-          <div class="history-list" id="historyList">
-            <div class="empty">Chưa có câu nào được chấm.</div>
-          </div>
-        </section>
-
-        <section class="history-panel">
-          <h2>Thêm câu của bạn</h2>
-          <div class="field-grid">
-            <label>
-              Câu tiếng Anh
-              <input id="customEnglishInput" type="text" placeholder="Ví dụ: I need to improve my English.">
-            </label>
-            <label>
-              Nghĩa tiếng Việt
-              <input id="customVietnameseInput" type="text" placeholder="Không bắt buộc">
-            </label>
-            <label>
-              Chủ đề
-              <input id="customTopicInput" type="text" placeholder="Câu của tôi">
-            </label>
             <label class="select-wrap">
-              Cấp độ
-              <select id="customLevelSelect" aria-label="Chọn cấp độ câu tự thêm">
-                <option value="A1">A1</option>
-                <option value="A2" selected>A2</option>
-                <option value="B1">B1</option>
-                <option value="B2">B2</option>
+              Chủ đề
+              <select id="topicSelect" aria-label="Chọn chủ đề">
+                <option value="all">Tất cả</option>
               </select>
             </label>
-            <button class="btn" type="button" id="addCustomBtn">Thêm vào kho</button>
+            <label class="select-wrap">
+              Luyện tập
+              <select
+                id="practiceFilterSelect"
+                aria-label="Chọn trạng thái câu luyện"
+              >
+                <option value="all">Tất cả câu</option>
+                <option value="unseen">Chưa gặp</option>
+                <option value="seen">Đã gặp</option>
+                <option value="incorrect">Chưa làm đúng</option>
+              </select>
+            </label>
+            <label class="select-wrap">
+              Che do hoc
+              <select id="studyModeSelect" aria-label="Chon che do hoc">
+                <option value="normal">Luyện tập thông thương</option>
+                <option value="vocabulary">Học từ vựng</option>
+                <option value="grammar">Học ngữ pháp</option>
+              </select>
+            </label>
+            <label class="select-wrap study-filter" id="vocabularyFilterWrap">
+              Tu vung
+              <input
+                id="vocabularyInput"
+                type="text"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="Vi du: work"
+              />
+            </label>
+            <label class="select-wrap study-filter" id="grammarFilterWrap">
+              Ngu phap
+              <select id="grammarSelect" aria-label="Chon ngu phap">
+                <option value="all">Tat ca ngu phap</option>
+              </select>
+            </label>
+            <span class="filter-status" id="studyFilterStatus"></span>
           </div>
-          <p class="mini" id="customStatus">Câu bạn thêm sẽ được lưu trong trình duyệt này.</p>
+
+          <div class="prompt-area">
+            <div class="meta-row">
+              <span class="pill" id="levelPill">A1</span>
+              <span class="pill blue" id="topicPill">Daily life</span>
+              <span class="pill amber" id="indexPill">1/1</span>
+            </div>
+            <p class="vietnamese" id="vietnamesePrompt"></p>
+
+            <div class="answer-box">
+              <label for="answerInput">Câu tiếng Anh của bạn</label>
+              <textarea
+                id="answerInput"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="Nhập bản dịch tiếng Anh..."
+              ></textarea>
+            </div>
+
+            <div class="actions">
+              <button class="btn" type="button" id="checkBtn">Kiểm tra</button>
+              <button class="btn secondary" type="button" id="hintBtn">
+                Gợi ý
+              </button>
+              <button class="btn secondary" type="button" id="nextBtn">
+                Câu tiếp
+              </button>
+              <button class="btn danger" type="button" id="resetBtn">
+                Làm mới điểm
+              </button>
+            </div>
+
+            <section
+              class="feedback"
+              id="feedback"
+              aria-live="polite"
+            ></section>
+          </div>
+
+          <section class="listening-lab" aria-labelledby="listeningTitle">
+            <div class="listening-head">
+              <div>
+                <h2 id="listeningTitle">Luyện nghe chép chính tả</h2>
+                <p class="mini">
+                  Bấm bắt đầu nghe, hệ thống sẽ đọc một đoạn tiếng Anh ngắn. Hãy
+                  nhập lại đúng những gì bạn nghe được.
+                </p>
+              </div>
+              <span class="pill blue" id="listeningLevelPill">Nghe</span>
+            </div>
+            <p class="listening-status" id="listeningStatus">
+              Sẵn sàng phát câu nghe đầu tiên.
+            </p>
+            <label class="select-wrap">
+              Tốc độ đọc
+              <select id="speechRateSelect" aria-label="Chọn tốc độ đọc">
+                <option value="0.5">0.5x</option>
+                <option value="0.75" selected>0.75x</option>
+                <option value="1">1.0x</option>
+              </select>
+            </label>
+            <div class="answer-box">
+              <label for="listeningInput">Đoạn bạn nghe được</label>
+              <textarea
+                id="listeningInput"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="Nhập lại câu tiếng Anh bạn vừa nghe..."
+              ></textarea>
+            </div>
+            <div class="listening-actions">
+              <button class="btn" type="button" id="startListeningBtn">
+                Bắt đầu nghe
+              </button>
+              <button
+                class="btn secondary"
+                type="button"
+                id="repeatListeningBtn"
+              >
+                Nghe lại
+              </button>
+              <button
+                class="btn secondary"
+                type="button"
+                id="checkListeningBtn"
+              >
+                Kiểm tra nghe
+              </button>
+              <button class="btn secondary" type="button" id="nextListeningBtn">
+                Câu nghe tiếp
+              </button>
+            </div>
+            <section
+              class="feedback"
+              id="listeningFeedback"
+              aria-live="polite"
+            ></section>
+          </section>
         </section>
-      </aside>
-    </div>
-  </main>
-  <script src="./assets/data/built-in-lessons.js"></script>
-  <script src="./assets/data/imported-800-cau.js"></script>
-  <script src="./assets/js/services.js"></script>
-  <script src="./assets/js/app.js"></script>
-</body>
+
+        <aside>
+          <section class="side-panel">
+            <h2>Tiến độ cấp độ</h2>
+            <div class="mini" id="progressText">0/0 câu trong bộ hiện tại.</div>
+            <div class="progress-track" aria-hidden="true">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="mini">
+              Nhấn <kbd>Ctrl</kbd> + <kbd>Enter</kbd> để chấm nhanh.
+            </div>
+            <div class="level-list" id="levelList"></div>
+          </section>
+
+          <section class="history-panel">
+            <h2>Câu gần đây</h2>
+            <div class="history-list" id="historyList">
+              <div class="empty">Chưa có câu nào được chấm.</div>
+            </div>
+          </section>
+
+          <section class="history-panel">
+            <h2>Thêm câu của bạn</h2>
+            <div class="field-grid">
+              <label>
+                Câu tiếng Anh
+                <input
+                  id="customEnglishInput"
+                  type="text"
+                  placeholder="Ví dụ: I need to improve my English."
+                />
+              </label>
+              <label>
+                Nghĩa tiếng Việt
+                <input
+                  id="customVietnameseInput"
+                  type="text"
+                  placeholder="Không bắt buộc"
+                />
+              </label>
+              <label>
+                Chủ đề
+                <input
+                  id="customTopicInput"
+                  type="text"
+                  placeholder="Câu của tôi"
+                />
+              </label>
+              <label class="select-wrap">
+                Cấp độ
+                <select
+                  id="customLevelSelect"
+                  aria-label="Chọn cấp độ câu tự thêm"
+                >
+                  <option value="A1">A1</option>
+                  <option value="A2" selected>A2</option>
+                  <option value="B1">B1</option>
+                  <option value="B2">B2</option>
+                </select>
+              </label>
+              <button class="btn" type="button" id="addCustomBtn">
+                Thêm vào kho
+              </button>
+            </div>
+            <p class="mini" id="customStatus">
+              Câu bạn thêm sẽ được lưu trong trình duyệt này.
+            </p>
+          </section>
+        </aside>
+      </div>
+    </main>
+    <script src="./assets/data/built-in-lessons.js"></script>
+    <script src="./assets/data/imported-800-cau.js"></script>
+    <script src="./assets/js/services.js"></script>
+    <script src="./assets/js/app.js"></script>
+  </body>
 </html>
