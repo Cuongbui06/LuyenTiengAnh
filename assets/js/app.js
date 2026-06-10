@@ -460,8 +460,98 @@ function tokens(text) {
   return normalized ? normalized.split(" ") : [];
 }
 
+const grammarGroups = [
+  {
+    label: "Thì hiện tại đơn",
+    match: ["present simple", "do you", "does", "thói quen", "hằng ngày"],
+  },
+  {
+    label: "Thì hiện tại tiếp diễn",
+    match: ["present continuous", "am/is/are + v-ing", "đang"],
+  },
+  {
+    label: "Thì hiện tại hoàn thành",
+    match: ["present perfect", "have you been", "i've been", "for/since", "hiện tại hoàn thành"],
+  },
+  {
+    label: "Thì quá khứ đơn",
+    match: ["past simple", "quá khứ đơn", "just"],
+  },
+  {
+    label: "Thì quá khứ hoàn thành",
+    match: ["past perfect", "quá khứ hoàn thành"],
+  },
+  {
+    label: "Thì tương lai",
+    match: ["will", "be going to", "future", "kế hoạch"],
+  },
+  {
+    label: "Động từ to be",
+    match: ["to be", "i'm", "i am", "is +", "are you", "my name is", "this is", "there are"],
+  },
+  {
+    label: "Câu hỏi",
+    match: ["question", "wh-question", "yes-no", "how old", "where are", "what do", "câu hỏi"],
+  },
+  {
+    label: "Động từ khuyết thiếu",
+    match: ["can", "could", "should", "may i", "must", "have to", "need"],
+  },
+  {
+    label: "Câu điều kiện",
+    match: ["conditional", "unless", "provided that", "even if", "điều kiện"],
+  },
+  {
+    label: "Câu bị động",
+    match: ["passive", "bị động", "need to be"],
+  },
+  {
+    label: "Câu tường thuật",
+    match: ["reported speech", "tường thuật"],
+  },
+  {
+    label: "Mệnh đề quan hệ",
+    match: ["relative clause", "mệnh đề quan hệ"],
+  },
+  {
+    label: "So sánh",
+    match: ["comparative", "comparison", "so sánh", "the more"],
+  },
+  {
+    label: "Giới từ",
+    match: ["preposition", "prepositions", "work at", "live in", "from +", "giới từ"],
+  },
+  {
+    label: "Danh động từ và động từ nguyên mẫu",
+    match: ["gerund", "infinitive", "like + gerund", "let me"],
+  },
+  {
+    label: "Liên từ và nhượng bộ",
+    match: ["connector", "although", "because of", "so that", "despite", "instead of", "nhượng bộ", "liên từ"],
+  },
+  {
+    label: "Yêu cầu và giao tiếp lịch sự",
+    match: ["request", "indirect question", "please", "lịch sự", "xin phép"],
+  },
+  {
+    label: "Cụm từ và mẫu câu thông dụng",
+    match: ["phrase", "phrases", "cấu trúc", "cách nói", "lời chúc", "chào hỏi", "tạm biệt"],
+  },
+];
+
 function grammarKey(item) {
-  return (item.focus || "General sentence pattern").trim();
+  const haystack = `${item.focus || ""} ${item.topic || ""} ${(item.answers || []).join(" ")}`.toLowerCase();
+  const normalizedHaystack = normalize(haystack);
+  const group = grammarGroups.find((entry) =>
+    entry.match.some((pattern) => {
+      const lowerPattern = pattern.toLowerCase();
+      return (
+        haystack.includes(lowerPattern) ||
+        normalizedHaystack.includes(normalize(lowerPattern))
+      );
+    }),
+  );
+  return group ? group.label : "Ngữ pháp và mẫu câu khác";
 }
 
 function vocabularyMatches(item, query) {
@@ -1182,9 +1272,12 @@ function renderTopics() {
 }
 
 function renderGrammarOptions() {
-  const options = [
-    ...new Set(lessons.filter(isAllowedByPlan).map(grammarKey)),
-  ].sort();
+  const available = new Set(lessons.filter(isAllowedByPlan).map(grammarKey));
+  const preferredOrder = [
+    ...grammarGroups.map((group) => group.label),
+    "Ngữ pháp và mẫu câu khác",
+  ];
+  const options = preferredOrder.filter((label) => available.has(label));
   els.grammarSelect.innerHTML =
     `<option value="all">Tất cả ngữ pháp</option>` +
     options
@@ -1490,7 +1583,7 @@ function resetPracticeView() {
   els.feedback.innerHTML = "";
   els.listeningFeedback.className = "feedback";
   els.listeningFeedback.innerHTML = "";
-  els.listeningStatus.textContent = "Sáºµn sÃ ng phÃ¡t cÃ¢u nghe Ä‘áº§u tiÃªn.";
+  els.listeningStatus.textContent = "Sẵn sàng phát câu nghe đầu tiên.";
   renderStudyControls();
   renderLesson();
 }
@@ -1498,6 +1591,14 @@ function resetPracticeView() {
 function setAccountMenu(open) {
   els.accountMenuPanel.classList.toggle("open", open);
   els.accountMenuBtn.setAttribute("aria-expanded", String(open));
+}
+
+function switchLevelToMix() {
+  if (state.level === "mix") return;
+  state.level = "mix";
+  document.querySelectorAll("[data-level]").forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.level === "mix");
+  });
 }
 
 document.querySelectorAll("[data-level]").forEach((button) => {
@@ -1525,6 +1626,7 @@ document.querySelectorAll("[data-level]").forEach((button) => {
 
 els.topicSelect.addEventListener("change", () => {
   state.topic = els.topicSelect.value;
+  switchLevelToMix();
   buildQueue();
   els.answerInput.value = "";
   els.listeningInput.value = "";
@@ -1540,6 +1642,7 @@ els.topicSelect.addEventListener("change", () => {
 els.studyModeSelect.addEventListener("change", () => {
   state.studyMode = els.studyModeSelect.value;
   localStorage.setItem("englishTrainerStudyMode", state.studyMode);
+  switchLevelToMix();
   resetPracticeView();
   if (state.studyMode === "vocabulary") els.vocabularyInput.focus();
 });
@@ -1547,18 +1650,21 @@ els.studyModeSelect.addEventListener("change", () => {
 els.vocabularyInput.addEventListener("input", () => {
   state.vocabularyQuery = els.vocabularyInput.value;
   localStorage.setItem("englishTrainerVocabularyQuery", state.vocabularyQuery);
+  if (state.vocabularyQuery.trim()) switchLevelToMix();
   resetPracticeView();
 });
 
 els.grammarSelect.addEventListener("change", () => {
   state.grammarFocus = els.grammarSelect.value;
   localStorage.setItem("englishTrainerGrammarFocus", state.grammarFocus);
+  switchLevelToMix();
   resetPracticeView();
 });
 
 els.practiceFilterSelect.addEventListener("change", () => {
   state.practiceFilter = els.practiceFilterSelect.value;
   localStorage.setItem("englishTrainerPracticeFilter", state.practiceFilter);
+  switchLevelToMix();
   buildQueue();
   els.answerInput.value = "";
   els.listeningInput.value = "";
