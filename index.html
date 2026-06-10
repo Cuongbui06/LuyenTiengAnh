@@ -257,6 +257,41 @@
               aria-live="polite"
             ></section>
           </section>
+
+          <section class="translator-mini" aria-labelledby="translatorTitle">
+            <div class="translator-head">
+              <div>
+                <h2 id="translatorTitle">Tra từ điển / Dịch thuật mini</h2>
+                <p class="mini">
+                  Nhập tiếng Anh hoặc tiếng Việt, hệ thống sẽ tự chọn hướng dịch phù hợp.
+                </p>
+              </div>
+              <span class="pill blue" id="translatorDirection">Auto</span>
+            </div>
+            <div class="translator-grid">
+              <label class="translator-field">
+                Nội dung cần dịch
+                <textarea
+                  id="translatorInput"
+                  autocomplete="off"
+                  spellcheck="false"
+                  placeholder="Nhập từ, câu hoặc đoạn văn..."
+                ></textarea>
+              </label>
+              <label class="translator-field">
+                Kết quả
+                <textarea
+                  id="translatorOutput"
+                  readonly
+                  placeholder="Bản dịch sẽ hiển thị ở đây..."
+                ></textarea>
+              </label>
+            </div>
+            <div class="translator-actions">
+              <button class="btn" type="button" id="translateBtn">Dịch ngay</button>
+              <span class="mini" id="translatorStatus" aria-live="polite"></span>
+            </div>
+          </section>
         </section>
 
         <aside>

@@ -116,6 +116,11 @@ const els = {
   checkListeningBtn: document.getElementById("checkListeningBtn"),
   nextListeningBtn: document.getElementById("nextListeningBtn"),
   listeningFeedback: document.getElementById("listeningFeedback"),
+  translatorInput: document.getElementById("translatorInput"),
+  translatorOutput: document.getElementById("translatorOutput"),
+  translateBtn: document.getElementById("translateBtn"),
+  translatorStatus: document.getElementById("translatorStatus"),
+  translatorDirection: document.getElementById("translatorDirection"),
   speechRateSelect: document.getElementById("speechRateSelect"),
   customEnglishInput: document.getElementById("customEnglishInput"),
   customVietnameseInput: document.getElementById("customVietnameseInput"),
@@ -458,6 +463,59 @@ function escapeHtml(value) {
 function tokens(text) {
   const normalized = normalize(text);
   return normalized ? normalized.split(" ") : [];
+}
+
+function detectTranslationTarget(text) {
+  const vietnameseMarks =
+    /[ăâđêôơưáàảãạắằẳẵặấầẩẫậéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùủũụứừửữựýỳỷỹỵ]/i;
+  const commonVietnameseWords =
+    /\b(tôi|bạn|anh|chị|em|là|của|và|hoặc|không|có|một|những|các|đang|đã|sẽ|muốn|cần|học|dịch)\b/i;
+  return vietnameseMarks.test(text) || commonVietnameseWords.test(text) ? "en" : "vi";
+}
+
+function readGoogleTranslateResult(data) {
+  if (!Array.isArray(data) || !Array.isArray(data[0])) return "";
+  return data[0]
+    .map((part) => (Array.isArray(part) ? part[0] : ""))
+    .filter(Boolean)
+    .join("");
+}
+
+async function translateMiniText() {
+  const sourceText = els.translatorInput.value.trim();
+  if (!sourceText) {
+    els.translatorOutput.value = "";
+    els.translatorStatus.textContent = "Nhập nội dung cần dịch trước.";
+    els.translatorDirection.textContent = "Auto";
+    els.translatorInput.focus();
+    return;
+  }
+
+  const targetLang = detectTranslationTarget(sourceText);
+  const directionText = targetLang === "en" ? "VI -> EN" : "EN -> VI";
+  const apiUrl =
+    `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=` +
+    encodeURIComponent(sourceText);
+
+  els.translateBtn.disabled = true;
+  els.translatorDirection.textContent = directionText;
+  els.translatorStatus.textContent = "Đang dịch...";
+
+  try {
+    const response = await fetch(apiUrl);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    const translatedText = readGoogleTranslateResult(data);
+    els.translatorOutput.value = translatedText || "Không đọc được kết quả dịch.";
+    els.translatorStatus.textContent = translatedText ? "Đã dịch xong." : "Không có kết quả phù hợp.";
+  } catch (error) {
+    console.error("Translate mini failed:", error);
+    els.translatorOutput.value = "";
+    els.translatorStatus.textContent =
+      "Không thể dịch lúc này. Hãy kiểm tra kết nối mạng hoặc thử lại sau.";
+  } finally {
+    els.translateBtn.disabled = false;
+  }
 }
 
 const grammarGroups = [
@@ -1689,6 +1747,13 @@ els.hintBtn.addEventListener("click", revealHint);
 els.nextBtn.addEventListener("click", nextLesson);
 els.resetBtn.addEventListener("click", resetStats);
 els.addCustomBtn.addEventListener("click", addCustomLesson);
+els.translateBtn.addEventListener("click", translateMiniText);
+els.translatorInput.addEventListener("keydown", (event) => {
+  if (event.ctrlKey && event.key === "Enter") {
+    event.preventDefault();
+    translateMiniText();
+  }
+});
 els.loginBtn.addEventListener("click", login);
 els.registerBtn.addEventListener("click", registerFreeAccount);
 els.logoutBtn.addEventListener("click", logout);
